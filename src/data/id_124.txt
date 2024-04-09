@@ -1,0 +1,12 @@
+USER
+id: 12345
+name: Andres David
+surname: Robles
+phone: 6789
+
+BOOKS
+title: La programacion
+author: unkown
+publisher: La editorial
+year_publisher: 1999
+
