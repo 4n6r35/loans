@@ -2,7 +2,8 @@ import { request, response } from "express";
 import fs from "fs";
 import path from "path";
 
-let cont = 122;
+const filesPath = './src/data'
+
 export const CreateSolicitudController = (req = request, res = response) => {
     const {
         id_user,
@@ -36,15 +37,15 @@ export const CreateSolicitudController = (req = request, res = response) => {
         }
         return true;
     };
-
+    
     // Verificar los valores de user y book
     const userValid = valueOfUser();
     const bookValid = valueOfBook();
-
+    
     // Si tanto el usuario como el libro son válidos, procede a guardar los datos
     if (userValid !== false && bookValid !== false) {
         cont++;
-
+        
         //Modelando la data para el guardado
         const data = {
             user: {
@@ -60,10 +61,19 @@ export const CreateSolicitudController = (req = request, res = response) => {
                 year_publisher: book_year_publisher,
             },
         };
-
-        //Contador para guardar el nombre de file (id_123)
-        let fileName = `id_${cont}.txt`;
-
+        
+        //validacion para asignar el nombre a los files (id_123)
+        let cont = 123;
+        let fileName;
+        const read = fs.readdirSync(filePath);
+        if (read.length !== 0) {
+            let last = read[read.length -1]
+            let nameId = Number(last.substring(3, last.length -4)) + 1
+            cont = nameId 
+        }
+        
+        fileName = `id_${cont}.txt`;
+        
         // path donde se guardara el file
         const dataFolder = path.join(process.cwd(), "./src/data");
         const filePath = path.join(dataFolder, fileName);
@@ -101,7 +111,6 @@ export const CreateSolicitudController = (req = request, res = response) => {
 export const DowloandSolicitudFile = (req = request, res = response) => {
     const { request_number } = req.params
 
-    const filesPath = './src/data'
     const filename = `${request_number}.txt`
     // Comprobamos si el archivo existe en la carpeta
     fs.access(path.join(filesPath, filename), fs.constants.F_OK, (err) => {
