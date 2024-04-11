@@ -5,6 +5,6 @@ const SolicitudRouter = Router();
 
 SolicitudRouter.post("/loan-create", CreateSolicitudController);
 
-SolicitudRouter.get("/dowloand/:request_number", DowloandSolicitudFile)
+SolicitudRouter.get("/download/:request_number", DowloandSolicitudFile)
 
 export default SolicitudRouter 

@@ -98,6 +98,7 @@ export const CreateSolicitudController = (req = request, res = response) => {
 
 export const DowloandSolicitudFile = (req = request, res = response) => {
     const { request_number } = req.query
+    console.log(request_number)
 
     const filename = `${request_number}.txt`
     // Comprobamos si el archivo existe en la carpeta

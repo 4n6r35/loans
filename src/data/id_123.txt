@@ -1,0 +1,12 @@
+USER
+id: 12345
+name: sdgds
+surname: gsgsdg
+phone: 123456789
+
+BOOKS
+title: tret
+author: atwesdtds
+publisher: tsdtsd
+year_publisher: 2002
+
