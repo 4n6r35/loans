@@ -3,7 +3,6 @@ import fs from "fs";
 import path from "path";
 
 const filesPath = './src/data'
-
 export const CreateSolicitudController = (req = request, res = response) => {
     const {
         id_user,
@@ -18,10 +17,8 @@ export const CreateSolicitudController = (req = request, res = response) => {
 
     const valueOfUser = () => {
         if (id_user === undefined || id_user === "" && user_name === undefined || user_name === "" && user_surname === undefined || user_surname === "" && user_phone === undefined || user_phone === "") {
-            res.status(404).json({
-                ok: false,
-                message: "la información solicitada del usuario no puede ser null",
-            });
+            res.status(404).sendFile('404.html', { root: 'public' })
+
             return false;
         }
         return true;
@@ -29,23 +26,20 @@ export const CreateSolicitudController = (req = request, res = response) => {
 
     const valueOfBook = () => {
         if (book_title === undefined || book_title === "" && book_author === undefined || book_author === "" && book_publisher === undefined || book_publisher === "" && book_year_publisher === undefined || book_year_publisher === "") {
-            res.status(404).json({
-                ok: false,
-                message: "la información solicitada del libro no puede ser null",
-            });
+            res.status(404).sendFile('404.html', { root: 'public' })
+
             return false;
         }
         return true;
     };
-    
+
     // Verificar los valores de user y book
     const userValid = valueOfUser();
     const bookValid = valueOfBook();
-    
+
     // Si tanto el usuario como el libro son válidos, procede a guardar los datos
     if (userValid !== false && bookValid !== false) {
-        cont++;
-        
+
         //Modelando la data para el guardado
         const data = {
             user: {
@@ -61,19 +55,19 @@ export const CreateSolicitudController = (req = request, res = response) => {
                 year_publisher: book_year_publisher,
             },
         };
-        
+
         //validacion para asignar el nombre a los files (id_123)
         let cont = 123;
         let fileName;
-        const read = fs.readdirSync(filePath);
+        const read = fs.readdirSync(filesPath);
         if (read.length !== 0) {
-            let last = read[read.length -1]
-            let nameId = Number(last.substring(3, last.length -4)) + 1
-            cont = nameId 
+            let last = read[read.length - 1]
+            let nameId = Number(last.substring(3, last.length - 4)) + 1
+            cont = nameId
         }
-        
+
         fileName = `id_${cont}.txt`;
-        
+
         // path donde se guardara el file
         const dataFolder = path.join(process.cwd(), "./src/data");
         const filePath = path.join(dataFolder, fileName);
@@ -93,36 +87,30 @@ export const CreateSolicitudController = (req = request, res = response) => {
         fs.writeFile(filePath, fileContent, (err) => {
             if (err) {
                 console.error("Error al guardar el archivo:", err);
-                res.status(500).json({
-                    ok: false,
-                    message: "Error al guardar el archivo",
-                });
+                res.status(500).sendFile('internal-error.html', { root: 'public' });
 
             } else {
-                res.status(200).json({
-                    ok: true,
-                    message: "Solicitud creada y archivo guardado exitosamente",
-                });
+                res.status(200).sendFile('index.html', { root: 'public' });
             }
         });
     }
 };
 
 export const DowloandSolicitudFile = (req = request, res = response) => {
-    const { request_number } = req.params
+    const { request_number } = req.query
 
     const filename = `${request_number}.txt`
     // Comprobamos si el archivo existe en la carpeta
     fs.access(path.join(filesPath, filename), fs.constants.F_OK, (err) => {
         if (err) {
-            res.status(404).send('El archivo no se encontrado.');
+            res.status(404).sendFile('book-not-found.html', { root: 'public' });
             return;
         }
 
         // res.setHeader('Content-Type', 'application/pdf')
         res.download(path.join(filesPath, filename), filename, (err) => {
             if (err) {
-                res.status(500).send('Ups, ha ocurrido un error al descargar el archivo.');
+                res.status(500).sendFile('404.html', { root: 'public' });
             }
         });
     });
